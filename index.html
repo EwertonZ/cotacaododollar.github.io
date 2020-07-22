@@ -12,6 +12,13 @@
         width:200px;
         margin:50px;
     }
+    .title{
+        font-weight: bold;
+    }
+    .numbers{
+        margin-right:20px;
+        font-size: larger;
+    }
 </style>
 <body>
     <div id="app">
@@ -19,20 +26,30 @@
                 <div class="row justify-content-center">
                     <img src="images/exchange.png" class="logo" alt="exchange logo">
                 </div>
-                <div class="row justify-content-center">
-                    
-                        <div class="form-inline">                    
-                            <div class="form-group mx-sm-3 mb-2">
+                <div class="row justify-content-center">                    
+                    <div class="form-inline">                    
+                        <div class="form-group mx-sm-3 mb-2">
                             <label for="inputPassword2" >$</label>
                             <input type="number" v-on:focus="clear()" class="form-control" id="inputPassword2" v-model="dollar" placeholder="Dollar">
-                            </div>
-                            <button v-on:click.prevent="calculate()" class="btn btn-primary mb-2">Consultar</button>
-                            <div class="form-group mx-sm-3 mb-2">
-                                <label for="inputPassword2">R$</label>
-                                <input type="number" v-on:focus="clear()" class="form-control" id="inputPassword2" v-model="real" placeholder="Real">
-                            </div>
-                            </div>
+                        </div>
+                        <button v-on:click.prevent="calculate()" class="btn btn-primary mb-2">Consultar</button>
+                        <div class="form-group mx-sm-3 mb-2">
+                            <label for="inputPassword2">R$</label>
+                            <input type="number" v-on:focus="clear()" class="form-control" id="inputPassword2" v-model="real" placeholder="Real">
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">  
+                    <h2>Cotação de Hoje</h2>                    
+                </div>
+                {{cotacao()}}
+                <div class="row justify-content-center">
+                    <p>
+                        <span class="title">Compra:</span> <span class="numbers">R${{buy}}</span> 
+                        <span class="title">Venda:</span> <span class="numbers">R${{sell}}</span>
+                        <span class="title">Variação:</span> <span v-if="variation > 0" class="numbers variation text-success">{{variation}}</span> <span v-if="variation < 0" class="numbers variation text-danger">{{variation}}</span>
                     
+                    </p>
                 </div>
             </div>    
          
@@ -46,6 +63,11 @@
                 dollar:'',
                 real:'',
                 result:'',
+                buy:null,
+                sell:null,
+                variation:null,
+                isHigh:true,
+                isLow:false,
                 info: null
             },
             mounted () {                
@@ -73,6 +95,13 @@
                 clear(){
                     this.dollar = ''
                     this.real = ''
+                },
+                cotacao(){
+                    if(this.info != null){
+                        this.buy = this.info.data.results.currencies.USD.buy.toFixed(2)
+                        this.sell = this.info.data.results.currencies.USD.sell.toFixed(2)
+                        this.variation = this.info.data.results.currencies.USD.variation.toFixed(2)
+                    }
                 }
             }
         })
