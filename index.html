@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<style>
+    .logo{
+        width:200px;
+        margin:50px;
+    }
+</style>
+<body>
+    <div id="app">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <img src="images/exchange.png" class="logo" alt="exchange logo">
+                </div>
+                <div class="row justify-content-center">
+                    
+                        <div class="form-inline">                    
+                            <div class="form-group mx-sm-3 mb-2">
+                            <label for="inputPassword2" >$</label>
+                            <input type="number" v-on:focus="clear()" class="form-control" id="inputPassword2" v-model="dollar" placeholder="Dollar">
+                            </div>
+                            <button v-on:click.prevent="calculate()" class="btn btn-primary mb-2">Consultar</button>
+                            <div class="form-group mx-sm-3 mb-2">
+                                <label for="inputPassword2">R$</label>
+                                <input type="number" v-on:focus="clear()" class="form-control" id="inputPassword2" v-model="real" placeholder="Real">
+                            </div>
+                            </div>
+                    
+                </div>
+            </div>    
+         
+      </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                dollar:'',
+                real:'',
+                result:'',
+                info: null
+            },
+            mounted () {                
+                axios({ method: 'GET', 'url':'https://api.hgbrasil.com/finance?format=json-cors&key=7150538f'})
+                .then(response => (this.info = response))
+            },
+            methods:{
+                calculate(){
+                    console.log('entrou')
+                    console.log(this.info.data.results.currencies.USD.buy) 
+                    if(this.dollar == '' && this.real == ''){
+                        return
+                    }
+                    if(this.dollar != '' && this.real == ''){
+                        this.real = this.dollar * this.info.data.results.currencies.USD.buy
+                        this.real = this.real.toFixed(2)
+                        console.log(this.real)
+                    }
+                    if(this.dollar == '' && this.real != ''){
+                        this.dollar = this.real / this.info.data.results.currencies.USD.buy
+                        this.dollar = this.dollar.toFixed(2)
+                    }
+                    if(this.dollar != '' && this.real != ''){
+                        return
+                    }
+                },
+                clear(){
+                    this.dollar = ''
+                    this.real = ''
+                }
+            }
+        })
+    </script>
+</body>
+</html>
