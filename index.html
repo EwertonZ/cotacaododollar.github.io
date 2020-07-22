@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <title>Document</title>
+    <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcR162D_4Vlqq8A6MHWTTGMmBcsj-tXds8uMxQ&usqp=CAU">
+    <title>Consultar Dollar</title>
 </head>
 <style>
     .logo{
@@ -52,9 +53,7 @@
                 .then(response => (this.info = response))
             },
             methods:{
-                calculate(){
-                    console.log('entrou')
-                    console.log(this.info.data.results.currencies.USD.buy) 
+                calculate(){                    
                     if(this.dollar == '' && this.real == ''){
                         return
                     }
