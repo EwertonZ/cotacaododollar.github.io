@@ -47,7 +47,7 @@
                     <p>
                         <span class="title">Compra:</span> <span class="numbers">R${{buy}}</span> 
                         <span class="title">Venda:</span> <span class="numbers">R${{sell}}</span>
-                        <span class="title">Variação:</span> <span v-if="variation > 0" class="numbers variation text-success">{{variation}}</span> <span v-if="variation < 0" class="numbers variation text-danger">{{variation}}</span>
+                        <span class="title">Variação:</span> <span v-if="variation > 0" class="numbers variation badge badge-success">{{variation}} % </span> <span v-if="variation < 0" class="numbers variation badge badge-danger">{{variation}} % </span>
                     
                     </p>
                 </div>
