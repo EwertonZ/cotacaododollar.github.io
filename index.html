@@ -30,12 +30,12 @@
                     <div class="form-inline">                    
                         <div class="form-group mx-sm-3 mb-2">
                             <label for="inputPassword2" >$</label>
-                            <input type="number" v-on:focus="clear()" class="form-control" id="inputPassword2" v-model="dollar" placeholder="Dollar">
+                            <input type="number" v-on:focus="clear()" @change="calculate()" class="form-control" id="inputPassword2" v-model="dollar" placeholder="Dollar">
                         </div>
                         <button v-on:click.prevent="calculate()" class="btn btn-primary mb-2">Consultar</button>
                         <div class="form-group mx-sm-3 mb-2">
                             <label for="inputPassword2">R$</label>
-                            <input type="number" v-on:focus="clear()" class="form-control" id="inputPassword2" v-model="real" placeholder="Real">
+                            <input type="number" v-on:focus="clear()" @change="calculate()" class="form-control" id="inputPassword2" v-model="real" placeholder="Real">
                         </div>
                     </div>
                 </div>
