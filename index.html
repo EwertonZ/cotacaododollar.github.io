@@ -24,25 +24,26 @@
     <div id="app">
             <div class="container">
                 <div class="row justify-content-center">
-                    <img src="images/exchange.png" class="logo" alt="exchange logo">
+                    <h1 class="display-1 my-4">{{currencyName }} Hoje</h1>
                 </div>
+                
                 <div class="row justify-content-center">                    
                     <div class="form-inline">                    
                         <div class="form-group mx-sm-3 mb-2">
-                            <label for="inputPassword2" >$</label>
-                            <input type="number" v-on:focus="clear()" @change="calculate()" class="form-control" id="inputPassword2" v-model="dollar" placeholder="Dollar">
+                            <label for="inputPassword2" ></label>
+                            <input type="number" v-on:focus="clear()" @change="calculate(centerField)" class="form-control" id="inputPassword2" v-model="dollar" :placeholder="currencyName">
                         </div>
-                        <button v-on:click.prevent="calculate()" class="btn btn-primary mb-2">Consultar</button>
+                        <button v-on:click.prevent="calculate()" class="btn btn-primary mb-2 btn-sm">Consultar</button>
                         <div class="form-group mx-sm-3 mb-2">
-                            <label for="inputPassword2">R$</label>
-                            <input type="number" v-on:focus="clear()" @change="calculate()" class="form-control" id="inputPassword2" v-model="real" placeholder="Real">
+                            <label for="inputPassword2"></label>
+                            <input type="number" v-on:focus="clear()" @change="calculate(centerField)" class="form-control" id="inputPassword2" v-model="real" placeholder="Real">
                         </div>
                     </div>
                 </div>
                 <div class="row justify-content-center">  
                     <h2>Cotação de Hoje</h2>                    
                 </div>
-                {{cotacao()}}
+                {{cotacao(centerField)}}
                 <div class="row justify-content-center">
                     <p>
                         <span class="title">Compra:</span> <span class="numbers">R${{buy}}</span> 
@@ -50,6 +51,22 @@
                         <span class="title">Variação:</span> <span v-if="variation > 0" class="numbers variation badge badge-success">{{variation}} % </span> <span v-if="variation < 0" class="numbers variation badge badge-danger">{{variation}} % </span>
                     
                     </p>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="currency" >Moeda</label>
+                        <input list="cities" v-on:focus="clear()" onfocus="this.value='';" @change="teste(centerField, info.data.results.currencies)" class="form-control" id="currency" v-model="centerField" :placeholder="centerField">
+                        <datalist id="cities">                           
+                            <option v-for="item in avaliableCurrencies" :value="item" >                                       
+                        </datalist>
+                    </div>
+                    
+                </div>
+                
+                <div class="row justify-content-center">
+                    <ul class="list-group list-group-horizontal">
+                        <li class="list-group-item" style="border:0;" v-for="item in avaliableCurrencies" >{{item}}</li>                        
+                    </ul>
                 </div>
             </div>    
          
@@ -60,6 +77,10 @@
         const app = new Vue({
             el: '#app',
             data: {
+                centerField:'USD',
+                currencyName:'Dollar',
+                avaliableCurrencies:['USD','EUR','ARS','BTC'],
+                currentCotation:'',
                 dollar:'',
                 real:'',
                 result:'',
@@ -75,32 +96,66 @@
                 .then(response => (this.info = response))
             },
             methods:{
-                calculate(){                    
+                calculate(cotation){       
+                    this.teste(cotation, this.info.data.results.currencies)
+                                 
                     if(this.dollar == '' && this.real == ''){
                         return
                     }
                     if(this.dollar != '' && this.real == ''){
-                        this.real = this.dollar * this.info.data.results.currencies.USD.buy
+                        this.real = this.dollar * this.currentCotation.buy
                         this.real = this.real.toFixed(4)
-                        console.log(this.real)
+                        
                     }
                     if(this.dollar == '' && this.real != ''){
-                        this.dollar = this.real / this.info.data.results.currencies.USD.buy
+                        this.dollar = this.real / this.currentCotation.buy
                         this.dollar = this.dollar.toFixed(4)
                     }
                     if(this.dollar != '' && this.real != ''){
                         return
                     }
                 },
+                teste(valor, infos){
+                    if(valor == '' || valor == null){                       
+                        valor = 'USD'
+                    }
+                    const currencies = {
+                        name: '',
+                        USD: function() { 
+                            this.name = 'Dollar'
+                            return infos.USD 
+                            },
+                        EUR: function() {
+                            this.name = 'Euro'
+                            return infos.EUR 
+                            },
+                        ARS: function() { 
+                            this.name = 'Peso Argentino'
+                            return infos.ARS 
+                            },
+                        BTC: function() {
+                            this.name = 'BitCoin'
+                            return infos.BTC 
+                            }
+                    }
+                    this.currentCotation = currencies[valor]()
+                    this.currencyName = currencies.name
+                    
+                },
                 clear(){
                     this.dollar = ''
                     this.real = ''
-                },
-                cotacao(){
+                },                
+                cotacao(cotation){
                     if(this.info != null){
-                        this.buy = this.info.data.results.currencies.USD.buy.toFixed(4)
-                        this.sell = this.info.data.results.currencies.USD.sell.toFixed(4)
-                        this.variation = this.info.data.results.currencies.USD.variation.toFixed(2)
+                        this.teste(cotation, this.info.data.results.currencies)
+                        this.buy = this.currentCotation.buy.toFixed(4)
+                        if(this.currentCotation.sell != null){
+                            this.sell = this.currentCotation.sell.toFixed(4)
+                        }else{
+                            this.sell = '-'
+                        }                        
+                        this.variation = this.currentCotation.variation.toFixed(2)
                     }
                 }
             }
